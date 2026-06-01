@@ -5,7 +5,7 @@
 
 ## 프로젝트 인원
 
-* 개발자 2명, 디자인팀
+* 개발자 1명 (본인) , 디자인팀
 
 ## 담당 역할 (기획 · 아키텍처 설계 · 핵심 기능 개발)
 
@@ -86,7 +86,7 @@ electron-updater 라이브러리가 사내 배포 서버 구조와 호환되지 
 웹 관리자 페이지에서 POS 애플리케이션으로 인증 토큰을 안전하게 전달할 방법이 필요했다.
 
 **해결**
-`ezchainpos://auth?token=xxx` 형태의 커스텀 프로토콜을 등록하였다. 앱 실행 중에는 `second-instance` 이벤트를 통해, 앱 미실행 상태에서는 `process.argv`를 통해 동일한 딥링크를 처리하도록 구현하여 일관된 SSO 인증 흐름을 제공하였다.
+`pos://auth?token=xxx` 형태의 커스텀 프로토콜을 등록하였다. 앱 실행 중에는 `second-instance` 이벤트를 통해, 앱 미실행 상태에서는 `process.argv`를 통해 동일한 딥링크를 처리하도록 구현하여 일관된 SSO 인증 흐름을 제공하였다.
 
 
 
@@ -98,7 +98,7 @@ electron-updater 라이브러리가 사내 배포 서버 구조와 호환되지 
 
 ## Team Size
 
-* 2 Software Engineers, Design Team
+* 1 Software Engineers, Design Team
 
 ## Responsibilities (Project Planning, Architecture Design, and Core Development)
 
