@@ -39,13 +39,11 @@
 Electron과 React 기반으로 개발되었으며, VAN 단말기 연동, 오프라인 환경에서도 안정적으로 동작하는 결제 큐 시스템, 재고·주문·쿠폰 관리 기능을 제공한다. Windows 환경에서 NSIS 설치 프로그램 형태로 배포된다.
 
 -----
-# 아키텍처 설계 (ARCHITECTURE)
+## 아키텍처 설계 (ARCHITECTURE)
 
 Ezchain POS v2 **클라이언트**의 구조와 데이터 흐름을 정리한다. (서버는 별도 레포 — `docs/PRINCIPLES.md` §0)
 
----
-
-## 1. 큰 그림
+### 1. 큰 그림
 
 Electron 데스크톱 앱. 3개 프로세스 영역으로 나뉜다.
 
@@ -94,9 +92,8 @@ flowchart TB
 
 **핵심 원칙**: 렌더러는 절대 직접 네트워크/DB/단말에 접근하지 않는다. 모든 것은 `preload` 화이트리스트를 통과한 IPC → main의 서비스 계층을 거친다.
 
----
 
-## 2. 레이어별 책임
+### 2. 레이어별 책임
 
 | 레이어 | 위치 | 책임 |
 |---|---|---|
@@ -112,9 +109,8 @@ flowchart TB
 | 영수증 | `main/utils/receipt.builder.js`, `bill.js` | 영수증 문자열 조립 + VAN 출력/저장. |
 | 인프라 | `main/{window,tray,updater}.js`, `api/config.js` | 창/트레이/자동업데이트/환경. |
 
----
 
-## 3. 부팅 & 인증 흐름
+### 3. 부팅 & 인증 흐름
 
 ```mermaid
 sequenceDiagram
@@ -144,9 +140,8 @@ sequenceDiagram
 - **데모 모드**(`main/demo/`): 외부 API/VAN을 목업으로 대체. `registerAllIpc()`가 데모면 `demo/ipc.js`만 등록.
 - `settings` 키-값 테이블이 로그인 config의 로컬 캐시 역할(매장명/사업자번호/van_type/icb_no/cube_no/is_online_enabled/use_mbill/min_usable_point 등).
 
----
 
-## 4. 결제 흐름 (핵심)
+### 4. 결제 흐름 (핵심)
 
 결제는 **수단에 따라 두 경로**로 나뉜다.
 
@@ -183,9 +178,8 @@ sequenceDiagram
 - **분할결제**: 최초건 `payment_id`가 `orgPaymentId`, 후속건은 `org_payment_id` 파라미터로 연결(상품 미저장·suffix id).
 - **교환**: 단일 신규 결제 1건(음수+양수 라인, `total_pay=차액`). 원거래 연결은 `exchange_org_id`.
 
----
 
-## 5. 영수증 출력 파이프라인
+### 5. 영수증 출력 파이프라인
 
 ```mermaid
 flowchart TD
@@ -205,9 +199,8 @@ flowchart TD
 - **VIRTUAL**은 `printReceipt`가 no-op → 물리 출력이 없다.
 - 영수증 종류: 일반(`buildReceiptBill`), 현금영수증(`buildCashBillReceiptBill`), 택스리펀드(`buildTaxRefundBill`). 저수준 포매팅은 `utils/bill.js`의 `BillBuilder`.
 
----
 
-## 6. VAN 추상화
+### 6. VAN 추상화
 
 ```
 main/api/van/
@@ -220,9 +213,8 @@ main/api/van/
 공통 인터페이스: `requestApproval`, `requestCancel`, `requestMobileApproval`, `requestMobileCancel`, `requestCashBillApproval`, `requestCashBillCancel`, `printReceipt`, `checkConnection`.
 → 서비스/큐/영수증은 프로바이더 종류를 몰라도 되고, `van_type`(로그인 config)으로 주입된다.
 
----
 
-## 7. 로컬 DB
+### 7. 로컬 DB
 
 ```
 main/db/
@@ -234,25 +226,22 @@ main/db/
 - 주요 테이블: `settings`(키-값 설정), `payment_queue`(결제 큐), `_migrations`(적용 이력).
 - 스키마 변경은 새 마이그레이션 파일 추가로만(§PRINCIPLES 6).
 
----
 
-## 8. 창(Window) 구성
+### 8. 창(Window) 구성
 
 - **login 창**: 인증. 성공 시 닫히고 POS 창 오픈.
 - **pos 창**: 메인. 대부분의 IPC/모달.
 - **customer 창**: 고객표시(장바구니 실시간 동기화 — `customer:sync`). 외부 API 불필요라 데모 모드에서도 실핸들러 사용.
 - 창 생성: `main/window.js`. 닫기 동작(트레이 최소화/종료)은 `settings.close_behavior` + 트레이(`main/tray.js`).
 
----
 
-## 9. 자동 업데이트
+### 9. 자동 업데이트
 
 - `main/updater.js`: 시작 시 서버 `version.json`과 자기 버전 비교, **서버 버전이 더 높을 때만** 업데이트(`compareVersions`).
 - 인스톨러 저장소는 서버로 단일화(모든 클라가 서버에서 내려받음). 상세는 `README.md`.
 
----
 
-## 10. 데이터 흐름 한 줄 요약
+### 10. 데이터 흐름 한 줄 요약
 
 ```
 [렌더러 UI] → posStore/cartStore → bridge.invoke("도메인:동작")
@@ -262,7 +251,6 @@ main/db/
 ```
 
 
------
 
 
 
