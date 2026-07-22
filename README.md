@@ -38,7 +38,7 @@
 
 Electron과 React 기반으로 개발되었으며, VAN 단말기 연동, 오프라인 환경에서도 안정적으로 동작하는 결제 큐 시스템, 재고·주문·쿠폰 관리 기능을 제공한다. Windows 환경에서 NSIS 설치 프로그램 형태로 배포된다.
 
------
+
 ## 아키텍처 설계 (ARCHITECTURE)
 
 Ezchain POS v2 **클라이언트**의 구조와 데이터 흐름을 정리한다. (서버는 별도 레포 — `docs/PRINCIPLES.md` §0)
@@ -249,8 +249,6 @@ main/db/
     → api/* (PHP 서버) · queue/* (VAN 단말) · db (SQLite) · receipt.builder (출력)
   → notify(payment:statusChanged 등) → 렌더러 상태 갱신
 ```
-
-
 
 
 
